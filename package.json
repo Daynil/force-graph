@@ -1,8 +1,8 @@
 {
-  "name": "d3tuts",
+  "name": "force-graph",
   "version": "1.0.0",
   "description": "",
-  "main": "gulpfile.js",
+  "main": "index.html",
   "scripts": {
     "start": "webpack-dev-server"
   },
@@ -16,6 +16,8 @@
     "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
-    "d3": "^3.5.16"
+    "axios": "^0.9.1",
+    "d3": "^3.5.16",
+    "lodash": "^4.9.0"
   }
 }
