@@ -37,7 +37,10 @@ function plotData(jsonData) {
 					.data(dataset.nodes)
 					.enter()
 					.append('circle')
-					.attr('r', 5)
+					.attr('r', d => {
+						if (typeof d.author == 'undefined') return d.authors.length * 2;
+						else return 5;
+					})
 					.style('fill', d => {
 						if (typeof d.author != 'undefined') {
 							return 'rgb(0, 255, 0)';
@@ -124,14 +127,13 @@ function parseData(jsonData) {
 		if (currNode.domain != null) {
 			for (let j = 0; j < currNode.authors.length; j++) {
 				let domainAuthor = currNode.authors[j];
-				let matchingAuthor = _.find(dataset.nodes, n => {
-					if (typeof n.author != 'undefined') {
-						return n.author === domainAuthor;
-					} else return false;
-				});
-				let authorLinkIndex = dataset.nodes.indexOf(matchingAuthor);
-				if (authorLinkIndex >= 0) {
-					dataset.edges.push({ source: i, target: authorLinkIndex });
+				for (let k = 0; k < dataset.nodes.length; k++) {
+					let curAuthNode = dataset.nodes[k];
+					if (typeof curAuthNode.author != 'undefined') {
+						if (domainAuthor.userId === curAuthNode.author.userId) {
+							dataset.edges.push({ source: i, target: k });
+						}
+					}
 				}
 			}
 		}
