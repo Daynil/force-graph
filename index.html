@@ -8,12 +8,26 @@
 		<!-- Load Resources -->
 		<link type="text/css" rel="stylesheet" href="styles.css"/>
 		<link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 		
 	</head>
 	<body style="margin: 0; padding: 0;">
+		<div id="foot">
+			<a id="gh-link" href="https://github.com/Daynil/force-graph">
+				<i class="fa fa-github-square fa-lg"></i>
+			</a>
+			<div id="foot-text">
+				By <a href="https://github.com/Daynil/">Daynil</a> for <a href="http://www.freecodecamp.com/">FCC</a>
+			</div>
+		</div>
 		
 		<div id="graph">
-			
+			<h2 id="title">Force-Directed Graph</h2>
+			<h3 id="sub-title">Camper News - Domains and Posters</h3>
+		</div>
+		<div id="tooltip" class="hidden">
+			<p>Domain: <span id="domain"></span></p>
+			<p>Authors: <span id="authors"></span></p>
 		</div>
 		
 		<!-- Link to Webpack bundle -->

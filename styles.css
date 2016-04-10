@@ -1,3 +1,75 @@
-body {
-	
+div {
+	display: inline-block;
+}
+
+#graph {
+	font-family: 'Raleway';
+	text-align: center;
+	margin-left: 15%;
+}
+
+svg {
+	box-shadow: 4px 4px 50px hsla(0, 0%, 0%, 0.4);
+    background-color: hsl(40, 100%, 97%);	
+}
+
+#tooltip {
+	position: absolute;
+	bottom: 400px;
+	right: 250px;
+	font-family: 'Raleway';
+	max-width: 250px;
+	background-color: hsla(0, 0%, 0%, 0.7);
+    color: hsl(208, 100%, 97%);
+    padding-bottom: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 5px;
+	vertical-align:  -webkit-baseline-middle;
+}
+
+.hidden {
+	display: none;
+}
+
+#foot {
+	position: absolute;
+	top: 8px;
+	right: 10px;
+	font-family: 'Raleway';
+	font-weight: 300;
+	font-size: 20px;
+	color: black;
+}
+
+#foot-text {
+	position: relative;
+	top: 10px;
+}
+
+#foot i, #foot a {
+	color: seagreen;
+	transition: 0.3s;
+	text-decoration: none;
+}
+
+#foot i {
+	position: relative;
+    right: -14px;
+    top: -14px;
+}
+
+#foot a:hover, #gh-link:hover i {
+	color: limegreen;
+	text-decoration: none;
+}
+
+#gh-link {
+	position: relative;
+    top: 23px;
+    right: 18px;
+}
+
+#foot i {
+	padding-left: 2px;
 }

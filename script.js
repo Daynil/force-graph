@@ -16,13 +16,13 @@ function init() {
 
 function plotData(jsonData) {
 	let dataset = parseData(jsonData);
-	console.log(dataset);
+	let authorImageSize = 40;
 	let force = d3.layout.force()
 					.nodes(dataset.nodes)
 					.links(dataset.edges)
 					.size([w, h])
 					.linkDistance([50])
-					.charge([-120])
+					.charge([-150])
 					.start();
 	
 	let svg = d3.select('#graph').append('svg').attr('width', w).attr('height', h);
@@ -33,20 +33,36 @@ function plotData(jsonData) {
 					.append('line')
 					.style('stroke', '#ccc')
 					.style('stroke-width', 1);
-	let nodes = svg.selectAll('circle')
-					.data(dataset.nodes)
-					.enter()
-					.append('circle')
-					.attr('r', d => {
-						if (typeof d.author == 'undefined') return d.authors.length * 2;
-						else return 5;
-					})
-					.style('fill', d => {
-						if (typeof d.author != 'undefined') {
-							return 'rgb(0, 255, 0)';
-						} else return 'rgb(0, 0, 255)';
-					})
-					.call(force.drag);
+	
+	// Append domain circles
+	let domainNodes = svg.selectAll('circle')
+						.data(dataset.nodes.filter(d => typeof d.author == 'undefined'))
+						.enter()
+						.append('circle')
+						.attr('r', d =>  d.authors.length * 4 + 4 )
+						.style('fill', d => '#238b57')
+						.on('mouseover', d => {
+							let tooltip = d3.select('#tooltip');
+							tooltip.classed('hidden', false);
+							tooltip.select('#domain').text(d.domain);
+							let authorString = '';
+							d.authors.forEach(author => {
+								if (authorString === '') authorString += `${author.username}`;
+								else authorString += `, ${author.username}`;
+							});
+							tooltip.select('#authors').text(authorString);
+						})
+						.on('mouseout', d => d3.select('#tooltip').classed('hidden', true))
+						.call(force.drag);
+					
+	let authorNodes = svg.selectAll('image')
+						.data(dataset.nodes.filter(d => typeof d.author != 'undefined'))
+						.enter()
+						.append('svg:image')
+						.attr('width', authorImageSize)
+						.attr('height', authorImageSize)
+						.attr('xlink:href', d => d.author.picture)
+						.call(force.drag);
 					
 	force.on('tick', () => {
 		edges
@@ -54,10 +70,18 @@ function plotData(jsonData) {
 			.attr('y1', d => d.source.y)
 			.attr('x2', d => d.target.x)
 			.attr('y2', d => d.target.y);
-		nodes
+		domainNodes
 			.attr('cx', d => d.x)
 			.attr('cy', d => d.y);
+		authorNodes
+			.attr('x', d => d.x - authorImageSize / 2)
+			.attr('y', d => d.y - authorImageSize / 2);
 	});
+	
+/*	let authorNodes = document.getElementsByClassName('author');
+	for (let i = 0; i < authorNodes.length; i++) {
+		authorNodes[i].style.backgroundImage = `url(${authorNodes[i].__data__.author.picture})`;
+	}*/
 }
 
 function parseData(jsonData) {
@@ -89,14 +113,15 @@ function parseData(jsonData) {
 	let dataset = {nodes: [], edges: []};
 	//let htmlBaseRegex = /(https?:\/\/.*\.c?o?m?i?o?\/)/;
 	let htmlBaseRegex = /.*(\.[a-z]{2,3}\/)/;
-	let domainList = _.sortedUniq( jsonData.map(article => htmlBaseRegex.exec(article.link)[0]) );
+	let domainList = _.uniq( jsonData.map(article => htmlBaseRegex.exec(article.link)[0]) );
 
 	// Create nodes for each domain and find all users that have pointed to it
 	domainList.forEach(domain => {
 		let authors = [];
 		jsonData.forEach(article => {
 			if (htmlBaseRegex.exec(article.link)[0] === domain) {
-				authors.push(article.author);
+				let dupe = _.find(authors, author => author.userId === article.author.userId);
+				if (typeof dupe === 'undefined') authors.push(article.author);
 			}
 		});
 		let node = {
@@ -105,7 +130,8 @@ function parseData(jsonData) {
 		}
 		dataset.nodes.push(node);
 	});
-	
+	console.log(dataset.nodes);
+	console.log(domainList);
 	// Create nodes for each user uniquely
 	jsonData.forEach(article => {
 		let match = _.find(dataset.nodes, n => {
